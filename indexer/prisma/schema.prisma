@@ -1,0 +1,40 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Profile {
+  owner         String   @id
+  metadataUri   String
+  createdLedger Int
+  updatedAt     DateTime @updatedAt
+  links         LinkedWallet[]
+  attestations  Attestation[]
+}
+
+model LinkedWallet {
+  id              String   @id @default(uuid())
+  owner           String
+  profile         Profile  @relation(fields: [owner], references: [owner], onDelete: Cascade)
+  chain           String
+  externalAddress String
+  ledger          Int
+  createdAt       DateTime @default(now())
+
+  @@unique([owner, chain, externalAddress])
+}
+
+model Attestation {
+  id       String   @id @default(uuid())
+  owner    String
+  profile  Profile  @relation(fields: [owner], references: [owner], onDelete: Cascade)
+  attestor String
+  delta    Int
+  reason   String
+  ledger   Int
+  createdAt DateTime @default(now())
+}

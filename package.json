@@ -1,0 +1,20 @@
+{
+  "name": "nexusid-app",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "indexer"
+  ],
+  "scripts": {
+    "build:sdk": "npm run build --workspace=packages/sdk",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:indexer": "npm run build --workspace=indexer",
+    "lint": "npm run lint --workspaces",
+    "typecheck": "tsc -b"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

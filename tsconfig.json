@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/sdk" },
+    { "path": "apps/web" },
+    { "path": "indexer" }
+  ]
+}
