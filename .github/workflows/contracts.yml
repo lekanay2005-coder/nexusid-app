@@ -1,0 +1,27 @@
+name: Contracts
+
+on:
+  push:
+    paths:
+      - "contracts/**"
+      - "Cargo.toml"
+  pull_request:
+    paths:
+      - "contracts/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: wasm32v1-none
+      - name: Test contracts
+        run: |
+          cd contracts
+          cargo test
+      - name: Build contracts
+        run: |
+          cd contracts
+          cargo build --target wasm32v1-none --release
