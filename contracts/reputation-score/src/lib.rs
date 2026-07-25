@@ -60,18 +60,19 @@ impl ReputationScore {
 
     pub fn record_attestation(
         env: Env,
+        attestor: Address,
         owner: Address,
         delta: i32,
         reason: String,
     ) -> Result<(), Error> {
-        owner.require_auth();
+        attestor.require_auth();
 
         if delta == 0 {
             return Err(Error::ZeroDelta);
         }
 
         let attestation = Attestation {
-            attestor: env.current_contract_address(),
+            attestor,
             delta,
             reason,
             ledger: env.ledger().sequence(),
