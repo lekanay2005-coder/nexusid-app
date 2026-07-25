@@ -27,6 +27,8 @@ Single repository containing both Soroban contracts (`contracts/`) and the appli
 | `chore: add e2e tests` | feature | Playwright end-to-end tests for the full flow |
 | `feat: add CONTRIBUTING.md` | docs | Contribution guide (done) |
 
+Created issues: [#1](https://github.com/lekanay2005-coder/nexusid-app/issues/1), [#2](https://github.com/lekanay2005-coder/nexusid-app/issues/2), [#3](https://github.com/lekanay2005-coder/nexusid-app/issues/3), [#4](https://github.com/lekanay2005-coder/nexusid-app/issues/4), [#5](https://github.com/lekanay2005-coder/nexusid-app/issues/5)
+
 ## Verification
 
 Contracts are located at `contracts/` in this repo. After deployment, contract IDs will be published as release tag `v0.1.0`.
