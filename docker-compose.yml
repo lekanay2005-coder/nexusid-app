@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: nexusid
+      POSTGRES_USER: nexusid
+      POSTGRES_PASSWORD: nexusid
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  indexer:
+    build: ./indexer
+    environment:
+      DATABASE_URL: postgresql://nexusid:nexusid@postgres:5432/nexusid
+      INDEXER_PORT: "4000"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
