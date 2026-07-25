@@ -1,5 +1,5 @@
-'react';
-import React, { useState, useEffect } from 'react';
+'use client';
+import { useState, useEffect } from 'react';
 import { getProfile, getLinks, createProfile, updateMetadata, getScore, getAttestationHistory } from '@nexusid/sdk';
 import ProfileCard from '../../components/ProfileCard';
 import LinkedWalletsList from '../../components/LinkedWalletsList';

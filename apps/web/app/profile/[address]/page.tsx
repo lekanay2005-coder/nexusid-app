@@ -1,4 +1,3 @@
-'react';
 import React from 'react';
 import { getProfile, getLinks, getScore, getAttestationHistory } from '@nexusid/sdk';
 import ProfileCard from '../../../components/ProfileCard';

@@ -1,5 +1,5 @@
-'react';
-import React, { useState, useEffect } from 'react';
+'use client';
+import { useState, useEffect } from 'react';
 
 interface WalletConnectButtonProps {
   onConnect?: (address: string) => void;

@@ -1,5 +1,5 @@
-'react';
-import React, { useState } from 'react';
+'use client';
+import { useState } from 'react';
 import { signSolanaChallenge, linkSolanaWallet, signEvmChallenge, linkEvmWallet } from '@nexusid/sdk';
 
 interface ChainLinkFlowProps {
