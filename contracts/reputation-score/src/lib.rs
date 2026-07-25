@@ -71,11 +71,13 @@ impl ReputationScore {
             return Err(Error::ZeroDelta);
         }
 
+        let ledger = env.ledger().sequence();
+
         let attestation = Attestation {
-            attestor,
+            attestor: attestor.clone(),
             delta,
-            reason,
-            ledger: env.ledger().sequence(),
+            reason: reason.clone(),
+            ledger,
         };
 
         let mut attestations = env
@@ -94,7 +96,10 @@ impl ReputationScore {
         env.storage().persistent().extend_ttl(&DataKey::Attestations(owner.clone()), 10000, 100000);
         env.storage().persistent().extend_ttl(&DataKey::Score(owner.clone()), 10000, 100000);
 
-        env.events().publish(("record_attestation", owner), (delta, new_score));
+        env.events().publish(
+            ("record_attestation", owner.clone()),
+            (attestor, owner, delta, reason, ledger, new_score),
+        );
 
         Ok(())
     }

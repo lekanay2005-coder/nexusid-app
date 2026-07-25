@@ -89,11 +89,9 @@ async function handleContractEvent(event: SorobanRpc.Api.EventResponse) {
   logger.info({ contractId, eventName, topics, ledger }, "Received contract event");
 
   if (contractId === identityRegistryId) {
-    if (eventName === 'ProfileCreated' || topics.includes('create_profile')) {
-      // Expecting owner and metadata_uri
-      // Depending on contract topic conventions, let's handle robustly
+    if (topics.includes('create_profile')) {
       const owner = topics[1] || value?.owner;
-      const metadataUri = value?.metadata_uri || topics[2];
+      const metadataUri = value?.metadata_uri;
       if (owner && metadataUri) {
         await prisma.profile.upsert({
           where: { owner: String(owner) },
@@ -101,9 +99,9 @@ async function handleContractEvent(event: SorobanRpc.Api.EventResponse) {
           create: { owner: String(owner), metadataUri: String(metadataUri), createdLedger: Number(ledger) },
         });
       }
-    } else if (eventName === 'ProfileUpdated' || topics.includes('update_metadata')) {
+    } else if (topics.includes('update_metadata')) {
       const owner = topics[1] || value?.owner;
-      const metadataUri = value?.metadata_uri || topics[2];
+      const metadataUri = value?.metadata_uri;
       if (owner && metadataUri) {
         await prisma.profile.updateMany({
           where: { owner: String(owner) },
@@ -111,10 +109,10 @@ async function handleContractEvent(event: SorobanRpc.Api.EventResponse) {
         });
       }
     }
-  } else if (contractId === walletLinkId) {
-    if (eventName === 'WalletLinked' || topics.includes('link_solana_wallet') || topics.includes('link_evm_wallet')) {
+    } else if (contractId === walletLinkId) {
+    if (topics.includes('link_solana_wallet') || topics.includes('link_evm_wallet') || topics.includes('remove_link')) {
       const owner = topics[1] || value?.owner;
-      const chain = topics[2] || value?.chain;
+      const chain = value?.chain || topics[2];
       const externalAddress = value?.external_address || topics[3];
       if (owner && chain && externalAddress) {
         // Convert buffer/address to hex or string representation
@@ -134,25 +132,39 @@ async function handleContractEvent(event: SorobanRpc.Api.EventResponse) {
             externalAddress: extAddrStr,
             ledger: Number(ledger),
           },
-        }).catch(() => {
-          // fallback if compound unique constraint differs
-        });
+        }).catch(() => {});
+      }
+    } else if (topics.includes('remove_link')) {
+      const owner = topics[1] || value?.[0];
+      const chain = value?.[1] || value?.chain;
+      const extAddress = value?.[2] || value?.external_address;
+      if (owner && chain && extAddress) {
+        const extAddrStr = Buffer.isBuffer(extAddress) ? extAddress.toString('hex') : String(extAddress);
+        await prisma.linkedWallet.deleteMany({
+          where: { owner: String(owner), chain: String(chain), externalAddress: extAddrStr },
+        }).catch(() => {});
       }
     }
-  } else if (contractId === reputationScoreId) {
-    if (eventName === 'AttestationRecorded' || topics.includes('attest') || topics.includes('record_attestation')) {
-      const owner = topics[1] || value?.owner;
-      const attestor = topics[2] || value?.attestor;
-      const delta = value?.delta ?? topics[3];
-      const reason = value?.reason ?? topics[4];
-      if (owner) {
+    } else if (contractId === reputationScoreId) {
+    if (topics.includes('record_attestation')) {
+      const owner = topics[1] || value?.[1];
+      const attestor = value?.[0];
+      const delta = value?.[2];
+      const reason = value?.[3];
+      const eventLedger = value?.[4];
+      if (owner && delta !== undefined) {
+        const profile = await prisma.profile.findUnique({ where: { owner: String(owner) } });
+        if (!profile) {
+          logger.warn({ owner }, "No profile found for attestation, skipping");
+          return;
+        }
         await prisma.attestation.create({
           data: {
             owner: String(owner),
             attestor: String(attestor || 'unknown'),
-            delta: Number(delta || 0),
+            delta: Number(delta),
             reason: String(reason || ''),
-            ledger: Number(ledger),
+            ledger: Number(eventLedger || ledger),
           },
         });
       }
