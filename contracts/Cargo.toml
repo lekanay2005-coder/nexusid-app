@@ -6,10 +6,5 @@ members = [
     "reputation-score",
 ]
 
-[workspace.package]
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.84"
-
 [workspace.dependencies]
 soroban-sdk = "27.0.0"

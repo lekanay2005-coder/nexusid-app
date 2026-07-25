@@ -17,8 +17,8 @@ Verifiable reputation scoring through attestations.
 - Read-only, no auth
 - Returns the most recent `limit` attestations
 
-### record_attestation(owner, delta, reason)
-- Auth: `owner.require_auth()` (attestor signs)
+### record_attestation(attestor, owner, delta, reason)
+- Auth: `attestor.require_auth()`
 - Delta must be non-zero (fails with `ZeroDelta`)
 - Appends attestation to history, updates aggregate score
 - Score is capped at i32 bounds via `checked_add`

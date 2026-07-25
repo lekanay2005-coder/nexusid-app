@@ -1,5 +1,5 @@
-import { addressToScVal, u32ToScVal } from './xdr';
-import { readContract, getEnvConfig } from './common';
+import { addressToScVal, i32ToScVal, stringToScVal, u32ToScVal } from './xdr';
+import { readContract, writeContract, getEnvConfig } from './common';
 
 export async function getScore(owner: string): Promise<number> {
   const env = getEnvConfig();
@@ -21,4 +21,16 @@ export async function getAttestationHistory(owner: string, limit: number): Promi
   } catch (err) {
     return [];
   }
+}
+
+export async function recordAttestation(
+  attestor: string,
+  owner: string,
+  delta: number,
+  reason: string,
+  sourcePublicKey: string,
+): Promise<void> {
+  const env = getEnvConfig();
+  const args = [addressToScVal(attestor), addressToScVal(owner), i32ToScVal(delta), stringToScVal(reason)];
+  await writeContract(env.reputationScoreId, 'record_attestation', args, sourcePublicKey);
 }
