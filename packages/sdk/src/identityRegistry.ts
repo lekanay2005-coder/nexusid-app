@@ -28,7 +28,7 @@ export async function getLinks(owner: string): Promise<Array<[string, Buffer]>> 
   const env = getEnvConfig();
   const args = [addressToScVal(owner)];
   try {
-    const res = await readContract(env.identityRegistryId, 'get_links', args);
+    const res = await readContract(env.walletLinkId, 'get_links', args);
     return res || [];
   } catch (err) {
     return [];

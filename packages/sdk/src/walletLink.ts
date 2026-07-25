@@ -47,3 +47,14 @@ export async function linkEvmWallet(
   ];
   return writeContract(env.walletLinkId, 'link_evm_wallet', args, sourcePublicKey);
 }
+
+export async function getWallets(owner: string): Promise<Array<{ chain: string; external_address: string }>> {
+  const env = getEnvConfig();
+  const args = [addressToScVal(owner)];
+  try {
+    const res = await readContract(env.walletLinkId, 'get_links', args);
+    return res || [];
+  } catch (err) {
+    return [];
+  }
+}
