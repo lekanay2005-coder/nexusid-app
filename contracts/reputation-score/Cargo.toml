@@ -1,0 +1,12 @@
+[package]
+name = "reputation-score"
+workspace = true
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[lib]
+crate-type = ["cdylib", "lib"]

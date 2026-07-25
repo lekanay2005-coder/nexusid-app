@@ -1,0 +1,12 @@
+[package]
+name = "identity-registry"
+workspace = true
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[lib]
+crate-type = ["cdylib", "lib"]
